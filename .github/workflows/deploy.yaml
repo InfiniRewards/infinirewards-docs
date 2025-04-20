@@ -28,16 +28,35 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Cloudflare Pages adapter
-        run: npm install -D @cloudflare/next-on-pages
-
-      - name: Add build script to package.json
+      - name: Update next.config.js for static export
         run: |
-          # Add pages:build script to package.json
-          npx json -I -f package.json -e 'this.scripts["pages:build"]="npx @cloudflare/next-on-pages"'
+          if [ -f "next.config.js" ]; then
+            CONFIG_FILE="next.config.js"
+          elif [ -f "next.config.mjs" ]; then
+            CONFIG_FILE="next.config.mjs"
+          else
+            echo "No next.config.js or next.config.mjs found, creating one"
+            CONFIG_FILE="next.config.js"
+            echo "module.exports = {}" > $CONFIG_FILE
+          fi
+          
+          # Backup the original config
+          cp $CONFIG_FILE ${CONFIG_FILE}.backup
+          
+          # Add or update the output property to 'export'
+          if grep -q "module.exports" $CONFIG_FILE; then
+            # CommonJS format
+            sed -i -e 's/module.exports\s*=\s*{/module.exports = {\n  output: "export",/g' $CONFIG_FILE
+          elif grep -q "export default" $CONFIG_FILE; then
+            # ES module format
+            sed -i -e 's/export default\s*{/export default {\n  output: "export",/g' $CONFIG_FILE
+          else
+            # Create a new config
+            echo "module.exports = { output: 'export' }" > $CONFIG_FILE
+          fi
 
-      - name: Build for Cloudflare Pages
-        run: npm run pages:build
+      - name: Build static export
+        run: npm run build
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: 1
@@ -50,4 +69,4 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          wrangler pages deploy .vercel/output/static --project-name=infinirewards-docs
+          wrangler pages deploy out --project-name=infinirewards-docs
