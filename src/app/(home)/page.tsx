@@ -9,7 +9,7 @@ export default function HomePage() {
       </p>
       <div className="mb-12 text-fd-muted-foreground max-w-2xl mx-auto">
         <p className="mb-4">
-          InfiniRewards introduces the concept of "Token with Utility" - adding programmable logic to 
+          InfiniRewards introduces the concept of &quot;Token with Utility&quot; - adding programmable logic to 
           both fungible (ERC20) and non-fungible (ERC1155) tokens on StarkNet.
         </p>
         <p>
