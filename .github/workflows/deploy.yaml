@@ -28,53 +28,58 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Add Edge Runtime to route files
+      - name: Modify next.config.mjs for Cloudflare compatibility
         run: |
-          # Add edge runtime to api/search.js or ts
-          if [ -f "app/api/search/route.js" ]; then
-            SEARCH_FILE="app/api/search/route.js"
-          elif [ -f "app/api/search/route.ts" ]; then
-            SEARCH_FILE="app/api/search/route.ts"
-          elif [ -f "pages/api/search.js" ]; then
-            SEARCH_FILE="pages/api/search.js"
-          elif [ -f "pages/api/search.ts" ]; then
-            SEARCH_FILE="pages/api/search.ts"
+          if [ -f "next.config.mjs" ]; then
+            CONFIG_FILE="next.config.mjs"
+          elif [ -f "next.config.js" ]; then
+            CONFIG_FILE="next.config.js"
           else
-            echo "Search API file not found in expected locations"
-            find . -name "search.js" -o -name "search.ts" -o -name "route.js" -o -name "route.ts" | grep -i api
+            echo "No next.config.js or next.config.mjs found, creating one"
+            CONFIG_FILE="next.config.js"
+            echo "module.exports = {}" > $CONFIG_FILE
           fi
           
-          if [ -n "$SEARCH_FILE" ] && [ -f "$SEARCH_FILE" ]; then
-            echo "Adding edge runtime to $SEARCH_FILE"
-            sed -i '1s/^/export const runtime = "edge";\n\n/' "$SEARCH_FILE"
-          fi
+          # Backup the original config
+          cp $CONFIG_FILE ${CONFIG_FILE}.backup
           
-          # Add edge runtime to docs/[[...slug]] page
-          if [ -d "app/docs" ]; then
-            find app/docs -name "page.js" -o -name "page.tsx" | while read -r file; do
-              echo "Adding edge runtime to $file"
-              sed -i '1s/^/export const runtime = "edge";\n\n/' "$file"
-            done
-          elif [ -f "pages/docs/[[...slug]].js" ]; then
-            echo "Adding edge runtime to pages/docs/[[...slug]].js"
-            sed -i '1s/^/export const runtime = "edge";\n\n/' "pages/docs/[[...slug]].js"
-          elif [ -f "pages/docs/[[...slug]].tsx" ]; then
-            echo "Adding edge runtime to pages/docs/[[...slug]].tsx"
-            sed -i '1s/^/export const runtime = "edge";\n\n/' "pages/docs/[[...slug]].tsx"
-          fi
+          # Create config with edge runtime for Cloudflare
+          cat > $CONFIG_FILE << EOL
+          /** @type {import('next').NextConfig} */
+          
+          const nextConfig = {
+            reactStrictMode: true,
+            experimental: {
+              serverActions: {
+                allowedOrigins: ["localhost:3000", "infinirewards-docs.pages.dev"],
+              },
+            },
+            // Force all pages to be compiled with the Edge Runtime
+            experimental: {
+              runtime: 'edge',
+              serverComponents: true,
+            },
+          }
+          
+          export default nextConfig
+          EOL
 
-      - name: Install Cloudflare Pages adapter
-        run: npm install -D @cloudflare/next-on-pages
-
-      - name: Add build script to package.json
-        run: |
-          npx json -I -f package.json -e 'this.scripts["pages:build"]="npx @cloudflare/next-on-pages"'
-
-      - name: Build for Cloudflare Pages
-        run: npm run pages:build
+      - name: Build
+        run: npm run build
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Create _routes.json file for Cloudflare Pages
+        run: |
+          mkdir -p .next/static
+          cat > .next/_routes.json << EOL
+          {
+            "version": 1,
+            "include": ["/*"],
+            "exclude": ["/build/*", "/static/*"]
+          }
+          EOL
 
       - name: Install Wrangler
         run: npm install -g wrangler@latest
@@ -84,4 +89,4 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          wrangler pages deploy .vercel/output/static --project-name=infinirewards-docs
+          wrangler pages deploy .next --project-name=infinirewards-docs
