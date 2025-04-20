@@ -37,12 +37,17 @@ jobs:
       - name: Install Wrangler
         run: npm install -g wrangler@latest
 
-      - name: Create output directory
+      - name: Prepare output directory for deployment
         run: |
+          # Create output directory
           mkdir -p .output
-          cp -r .next/standalone/* .output/
-          mkdir -p .output/static
-          cp -r .next/static .output/static/
+          
+          # Copy required Next.js output files
+          cp -r .next .output/
+          cp -r public .output/ || true
+          
+          # Remove large cache files to stay under the size limit
+          rm -rf .output/.next/cache
 
       - name: Deploy to Cloudflare Pages
         env:
