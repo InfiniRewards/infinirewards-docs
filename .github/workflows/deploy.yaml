@@ -28,25 +28,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Update next.config.js for static export
-        run: |
-          # Check if next.config.js exists and create/modify as needed
-          if [ -f "next.config.js" ]; then
-            # Backup original config
-            cp next.config.js next.config.js.bak
-            
-            # Add/update output export config
-            sed -i 's/module.exports = /module.exports = Object.assign(/' next.config.js
-            echo ", { output: 'export' })" >> next.config.js
-          else
-            # Create a basic config file with static export
-            echo "module.exports = { output: 'export' };" > next.config.js
-          fi
-          
-          cat next.config.js
+      - name: Install Cloudflare Pages adapter
+        run: npm install -D @cloudflare/next-on-pages
 
-      - name: Build
-        run: npm run build
+      - name: Add build script to package.json
+        run: |
+          # Add pages:build script to package.json
+          npx json -I -f package.json -e 'this.scripts["pages:build"]="npx @cloudflare/next-on-pages"'
+
+      - name: Build for Cloudflare Pages
+        run: npm run pages:build
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: 1
@@ -59,4 +50,4 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          wrangler pages deploy out --project-name=infinirewards-docs
+          wrangler pages deploy .vercel/output/static --project-name=infinirewards-docs
