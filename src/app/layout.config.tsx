@@ -16,10 +16,18 @@ export const baseOptions: BaseLayoutProps = {
           height="24"
           xmlns="http://www.w3.org/2000/svg"
           aria-label="Logo"
+          viewBox="0 0 24 24"
         >
-          <circle cx={12} cy={12} r={12} fill="currentColor" />
+          <path
+            d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
-        My App
+        InfiniRewards
       </>
     ),
   },
@@ -29,5 +37,11 @@ export const baseOptions: BaseLayoutProps = {
       url: '/docs',
       active: 'nested-url',
     },
+    {
+      text: 'GitHub',
+      url: 'https://github.com/infinirewards',
+      external: true,
+    },
   ],
+  githubUrl: 'https://github.com/infinirewards',
 };

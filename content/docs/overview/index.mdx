@@ -1,0 +1,205 @@
+---
+title: "InfiniRewards: Token with Utility"
+description: "An introduction to InfiniRewards and its core concepts"
+---
+
+# InfiniRewards: Token with Utility
+
+## Introduction
+
+InfiniRewards introduces the concept of "Token with Utility" - an extension of the core platform that adds programmable logic to both fungible (ERC20) and non-fungible (ERC1155) tokens. This approach transforms tokens from simple digital assets into functional tools with specific capabilities, behaviors, and use cases embedded within them.
+
+By defining logic at the token level, we create a more flexible, extensible rewards ecosystem that empowers merchants to craft unique experiences while maintaining the standardized protocol that makes InfiniRewards valuable.
+
+## Core Concept
+
+Each token issued through InfiniRewards can have associated utility logic that defines:
+
+1. **Where it can be used** - Specific merchants, locations, platforms, or contexts
+2. **How it can be used** - Redemption methods, transfer restrictions, time limitations
+3. **What it represents** - Claim rights, membership status, access privileges, financial instruments
+4. **Verification mechanisms** - How token legitimacy and ownership are validated
+5. **Lifecycle management** - Issuance, expiration, redemption, and retirement rules
+
+This utility logic is defined during token creation and stored as on-chain metadata, ensuring transparency and immutability while allowing for complex behaviors.
+
+## Use Cases
+
+### 1. Order Fulfillment Tokens
+
+**Concept:** Merchants issue collectible tokens (ERC1155) that represent specific ordered items, allowing customers to claim their purchases securely.
+
+**Implementation:**
+- Token contains order metadata (product details, purchase date)
+- Merchant-specific claiming logic (pickup locations, identification requirements)
+- Automatic verification and redemption tracking
+- Optional receipt generation upon successful redemption
+
+**Benefits:**
+- Streamlines order fulfillment without physical vouchers
+- Creates transparent tracking of purchase-to-fulfillment process
+- Reduces fraud through cryptographic verification
+- Enables digital collectible proof-of-purchase
+
+### 2. Points Rewards with Cashback Logic
+
+**Concept:** Points tokens (ERC20) with embedded cashback rules based on merchant-defined criteria.
+
+**Implementation:**
+- Percentage-based cashback calculations based on purchase amount
+- Tiered cashback rates for different membership levels
+- Time-limited promotional cashback rates
+- Merchant-specific redemption parameters
+- Cross-merchant cashback agreements and conversions
+
+**Benefits:**
+- Automated, transparent cashback processing
+- Reduced operational overhead for rewards management
+- Enhanced customer loyalty through immediate rewards visibility
+- Simplified cross-merchant reward compatibility
+
+### 3. Membership Proof Systems
+
+**Concept:** Tokens that serve as membership verification with integrated membership privilege logic.
+
+**Implementation:**
+- Tiered membership tokens with different access levels
+- Time-based validity and automatic renewal options
+- Embedded discount entitlements and special access rules
+- Activity-based tier progression logic
+- Membership verification protocols for merchant systems
+
+**Benefits:**
+- Single token represents both membership status and associated privileges
+- Eliminates manual verification of membership status
+- Enables seamless cross-merchant recognition of loyalty tiers
+- Creates opportunities for membership-level-specific promotions
+
+### 4. Supply Chain Tracking Tokens
+
+**Concept:** Tokens that track products through supply chain stages, with embedded verification logic at each step.
+
+**Implementation:**
+- Product-linked tokens that evolve through supply chain stages
+- Timestamp and geolocation verification at key checkpoints
+- Quality assurance and condition verification inputs
+- Custody transfer protocols and authentication
+- Final delivery confirmation and warranty activation
+
+**Benefits:**
+- Immutable record of product journey from manufacturer to consumer
+- Enhanced transparency for product authenticity verification
+- Simplified warranty activation and service history tracking
+- Consumer access to provenance information
+- Reduced counterfeit risk through verifiable supply chain history
+
+### 5. Lending and Real-World Assets (RWAs)
+
+**Concept:** Tokens representing financial instruments with embedded lending logic and real-world asset backing.
+
+**Implementation:**
+- Asset-backed tokens with verifiable collateral links
+- Automated interest calculation and distribution
+- Loan term enforcement through smart contracts
+- Collateralization ratio monitoring and maintenance
+- Default handling and collateral liquidation protocols
+
+**Benefits:**
+- Democratized access to lending and borrowing
+- Reduced intermediary costs through automated processes
+- Transparent terms and conditions embedded in token logic
+- Real-time monitoring of loan performance
+- Simplified secondary market trading of tokenized debt
+
+## Developing with StarkNet
+
+StarkNet provides a Layer 2 scaling solution that significantly enhances the capabilities of the InfiniRewards platform through several key advantages:
+
+### StarkNet Fundamentals
+
+1. **Cairo Programming Language**: StarkNet uses Cairo, a Turing-complete programming language designed for creating provable programs. Cairo enables complex business logic with mathematical guarantees of correctness.
+
+2. **STARK Proofs**: StarkNet utilizes STARK (Scalable Transparent ARgument of Knowledge) proofs to compress thousands of transactions into a single proof, reducing gas costs while maintaining security.
+
+3. **Account Abstraction by Default**: Unlike Ethereum's EOA model, StarkNet implements account abstraction natively, enabling powerful programmable accounts with customized validation logic.
+
+4. **Low Transaction Costs**: By batching multiple transactions into a single proof, StarkNet dramatically reduces the per-transaction cost, making micro-transactions economically viable.
+
+5. **Composability**: StarkNet maintains the composability of the Ethereum mainnet while scaling transaction throughput, allowing seamless interaction between different contracts and protocols.
+
+### Leveraging Account Abstraction
+
+InfiniRewards utilizes StarkNet's native account abstraction to create a superior user and merchant experience:
+
+#### Current Implementation
+
+In our current system, we maintain separate account types:
+- **InfiniRewardsUserAccount**: Represents individual users/customers
+- **InfiniRewardsMerchantAccount**: Represents merchant businesses
+
+This separation allows for specialized functionality and permissions for each account type, but with StarkNet's account abstraction, we can enhance this model further.
+
+#### Enhanced Account Capabilities
+
+1. **Multi-call Transactions**: 
+   - Users can perform multiple actions in a single transaction (e.g., claim multiple rewards from different merchants)
+   - Merchants can batch-process rewards distribution to thousands of users in one transaction
+
+2. **Session Keys**:
+   - Temporary limited permissions for specific functions
+   - Users can generate time-limited keys for mobile apps without exposing their main keys
+   - Merchants can delegate specific administrative functions to employees with restricted permissions
+
+3. **Gasless Transactions**:
+   - Implement sponsored transactions where merchants cover gas costs for user redemptions
+   - Enable meta-transactions where a third party can submit a user's signed transaction
+
+4. **Custom Authorization Logic**:
+   - Multi-signature requirements for high-value transactions
+   - Time-locked transactions for scheduled rewards distribution
+   - Spending limits on merchant accounts to prevent unauthorized token issuance
+
+5. **Recovery Mechanisms**:
+   - Social recovery options for lost keys
+   - Tiered security with different authorization requirements based on transaction value
+   - Guardian-based account recovery systems
+
+### Application to Token Utility
+
+Account abstraction directly enhances our Token with Utility model in several ways:
+
+1. **Programmable Redemption Logic**:
+   - Tokens can interact directly with user accounts to validate redemption conditions
+   - Automatic execution of complex redemption scenarios without requiring multiple transactions
+
+2. **Conditional Token Transfers**:
+   - Tokens can enforce built-in transfer limitations based on user status, location, or time
+   - Automatic validation of membership status before processing privileged transactions
+
+3. **Batch Operations**:
+   - Merchants can issue tokens to thousands of users in a single transaction
+   - Users can redeem multiple tokens across different merchants in one operation
+
+4. **Payment Flexibility**:
+   - Support for payments in different tokens with automatic conversion
+   - Split payments across multiple token types
+
+5. **Access Control Abstraction**:
+   - Delegate specific token management functions to third parties without compromising security
+   - Enable temporary access for promotional events or limited-time offers
+
+### Implementation Strategy
+
+To fully leverage StarkNet's capabilities, we'll implement:
+
+1. **Account Factories**:
+   - Deploying standardized but customizable account contracts for both users and merchants
+   - Supporting seamless upgrades to account logic without affecting user assets
+
+2. **Modular Account Extensions**:
+   - Optional plugins for specialized functionality (e.g., advanced recovery, multi-sig)
+   - Merchant-specific modules for custom loyalty logic
+
+3. **Account-Bound Utility Logic**:
+   - Token behavior that adapts based on the capabilities of the interacting accounts
+   - Account-level permissions and restrictions for token usage 

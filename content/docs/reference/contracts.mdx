@@ -1,0 +1,82 @@
+---
+title: "Contract Reference"
+description: "Overview of InfiniRewards smart contracts"
+---
+
+# InfiniRewards Contract Reference
+
+This document provides an overview of the InfiniRewards smart contracts. For detailed documentation of each contract, follow the links below.
+
+## Project Structure
+
+```
+└── contracts
+    └── src
+        ├── InfiniRewardsCollectible.cairo
+        ├── InfiniRewardsFactory.cairo
+        ├── InfiniRewardsMerchantAccount.cairo
+        ├── InfiniRewardsPoints.cairo
+        ├── InfiniRewardsUserAccount.cairo
+        ├── components
+            └── account.cairo
+        ├── interfaces
+            ├── IInfiniRewards.cairo
+            ├── IInfiniRewardsMerchantAccount.cairo
+            ├── IInfiniRewardsPoints.cairo
+            ├── IInfiniRewardsUserAccount.cairo
+            ├── permission.cairo
+            ├── policy.cairo
+            └── session_key.cairo
+        ├── lib.cairo
+        └── utils
+            └── asserts.cairo
+```
+
+## Core Contracts
+
+<Cards>
+  <Card title="InfiniRewardsCollectible" href="/docs/reference/InfiniRewardsCollectible" />
+  <Card title="InfiniRewardsPoints" href="/docs/reference/InfiniRewardsPoints" />
+  <Card title="InfiniRewardsFactory" href="/docs/reference/InfiniRewardsFactory" />
+</Cards>
+
+An ERC1155-based contract for managing collectible tokens, an ERC20-based contract for managing points, and a factory contract for deploying components.
+
+## Account Contracts
+
+<Card title="Account Contracts" href="/docs/reference/AccountContracts" />
+
+Specialized account contracts for different user types, leveraging StarkNet's account abstraction features.
+
+## Utility Components
+
+<Card title="Utility Components" href="/docs/reference/UtilityComponents" />
+
+Additional components that enhance the system's functionality, including permission management, session keys, and policy enforcement.
+
+## Contract Interactions
+
+The following diagram illustrates the main interactions between the different contracts:
+
+```
+                        ┌─────────────────┐
+                        │InfiniRewardsFactory│
+                        └─────────┬───────┘
+                                  │ deploys
+                        ┌─────────┼───────┐
+                        │         │       │
+               ┌────────▼──┐   ┌─▼────┐  ┌▼────────┐
+               │Merchant   │   │User  │  │Points    │
+               │Account    │   │Account│  │Contract │
+               └────────┬──┘   └──────┘  └┬─────┬──┘
+                        │                 │     │
+                        │ manages         │     │
+                        ▼                 │     │
+               ┌────────────┐             │     │
+               │Collectible │◄────────────┘     │
+               │Contract    │    purchases       │
+               └────────────┘                    │
+                                  issues/redeems │
+                                                 ▼
+                                            Users
+``` 

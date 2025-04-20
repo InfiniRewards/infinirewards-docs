@@ -1,0 +1,123 @@
+---
+title: "Utility Components"
+description: "Reference documentation for the InfiniRewards utility components"
+---
+
+# Utility Components
+
+InfiniRewards includes several utility components that enhance the functionality of the core contracts.
+
+## Permission Management
+
+The permission management system controls access to critical functions.
+
+### Permission Types
+
+| Permission | Description |
+|------------|-------------|
+| `OWNER` | Full control over a contract |
+| `ADMIN` | Administrative functions |
+| `ISSUER` | Can issue points or tokens |
+| `REDEEMER` | Can redeem points or tokens |
+| `MANAGER` | Can manage contract settings |
+
+### Methods
+
+#### Check Permission
+
+```rust
+fn check_permission(
+    permission: felt252,
+    user: ContractAddress,
+    contract: ContractAddress
+) -> bool
+```
+
+Checks if a user has a specific permission.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `permission` | `felt252` | Permission to check |
+| `user` | `ContractAddress` | User address |
+| `contract` | `ContractAddress` | Contract to check permission for |
+
+Returns: Whether the user has the permission
+
+## Session Keys
+
+Session keys provide temporary limited permissions for specific functions.
+
+### Session Key Structure
+
+```rust
+struct SessionKey {
+    public_key: felt252,
+    expiry: u64,
+    permitted_calls: Array<PermittedCall>
+}
+
+struct PermittedCall {
+    to: ContractAddress,
+    selector: felt252,
+    calldata_len_range: (u32, u32)
+}
+```
+
+### Methods
+
+#### Validate Session Transaction
+
+```rust
+fn validate_session_transaction(
+    session_key_id: felt252,
+    calls: Array<Call>,
+    signature: Array<felt252>
+) -> bool
+```
+
+Validates a transaction signed with a session key.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `session_key_id` | `felt252` | ID of the session key |
+| `calls` | `Array<Call>` | Calls to validate |
+| `signature` | `Array<felt252>` | Signature to verify |
+
+Returns: Whether the transaction is valid
+
+## Policy Enforcement
+
+Policy enforcement implements business rules and constraints for tokens and accounts.
+
+### Policy Types
+
+| Policy | Description |
+|--------|-------------|
+| `TransferPolicy` | Controls when and how tokens can be transferred |
+| `RedemptionPolicy` | Rules for redeeming tokens |
+| `IssuancePolicy` | Rules for issuing tokens |
+| `ExpiryPolicy` | Handles token expiration rules |
+
+### Methods
+
+#### Check Transfer Policy
+
+```rust
+fn check_transfer_policy(
+    token: ContractAddress,
+    from: ContractAddress,
+    to: ContractAddress,
+    amount: u256
+) -> bool
+```
+
+Checks if a transfer complies with the policy.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `token` | `ContractAddress` | Token contract address |
+| `from` | `ContractAddress` | Sender address |
+| `to` | `ContractAddress` | Recipient address |
+| `amount` | `u256` | Amount to transfer |
+
+Returns: Whether the transfer is allowed by policy 

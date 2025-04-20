@@ -1,0 +1,136 @@
+---
+title: "InfiniRewardsPoints"
+description: "Reference documentation for the InfiniRewardsPoints contract"
+---
+
+# InfiniRewardsPoints
+
+An ERC20-based contract that manages the points system within InfiniRewards.
+
+## Storage Variables
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `ByteArray` | Name of the points token |
+| `symbol` | `ByteArray` | Symbol of the points token |
+| `decimals` | `u8` | Decimals for the points token (typically 18) |
+| `merchant` | `ContractAddress` | Address of the merchant who owns this points contract |
+| `transfer_whitelist` | `Map<ContractAddress, bool>` | Addresses allowed to receive point transfers |
+| `points_multipliers` | `Map<ContractAddress, u256>` | Special multipliers for specific users |
+
+## Events
+
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| `ERC20Event` | Inherited | Standard ERC20 events (Transfer, Approval) |
+| `PointsIssued` | `to: ContractAddress`, `amount: u256` | Emitted when points are issued to a user |
+| `PointsRedeemed` | `from: ContractAddress`, `amount: u256` | Emitted when points are redeemed |
+| `MultiplierSet` | `user: ContractAddress`, `multiplier: u256` | Emitted when a user's points multiplier is updated |
+
+## Key Methods
+
+### Constructor
+
+```rust
+fn constructor(
+    ref self: ContractState,
+    name: ByteArray,
+    symbol: ByteArray,
+    merchant: ContractAddress
+)
+```
+
+Initializes a new points token contract.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `name` | `ByteArray` | Name of the points token |
+| `symbol` | `ByteArray` | Symbol of the points token |
+| `merchant` | `ContractAddress` | Address of the merchant who owns this contract |
+
+### Issue Points
+
+```rust
+fn issue_points(
+    ref self: ContractState,
+    to: ContractAddress,
+    amount: u256
+)
+```
+
+Issues new points to a user (merchant only).
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `to` | `ContractAddress` | Recipient of the points |
+| `amount` | `u256` | Amount of points to issue |
+
+### Issue Points With Receipt
+
+```rust
+fn issue_points_with_receipt(
+    ref self: ContractState,
+    to: ContractAddress,
+    amount: u256,
+    receipt_id: felt252,
+    timestamp: u64
+)
+```
+
+Issues points with a receipt ID for tracking purposes.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `to` | `ContractAddress` | Recipient of the points |
+| `amount` | `u256` | Amount of points to issue |
+| `receipt_id` | `felt252` | Unique identifier for the transaction |
+| `timestamp` | `u64` | Timestamp of the transaction |
+
+### Redeem Points
+
+```rust
+fn redeem_points(
+    ref self: ContractState,
+    from: ContractAddress,
+    amount: u256
+)
+```
+
+Redeems (burns) points from a user (merchant only).
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `from` | `ContractAddress` | User to redeem points from |
+| `amount` | `u256` | Amount of points to redeem |
+
+### Set Points Multiplier
+
+```rust
+fn set_points_multiplier(
+    ref self: ContractState,
+    user: ContractAddress,
+    multiplier: u256
+)
+```
+
+Sets a points multiplier for a specific user (merchant only).
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `user` | `ContractAddress` | Target user address |
+| `multiplier` | `u256` | Multiplier value (e.g., 150 for 1.5x) |
+
+### Add To Transfer Whitelist
+
+```rust
+fn add_to_transfer_whitelist(
+    ref self: ContractState,
+    address: ContractAddress
+)
+```
+
+Adds an address to the transfer whitelist, allowing it to receive points transfers.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `address` | `ContractAddress` | Address to add to the whitelist | 

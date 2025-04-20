@@ -1,0 +1,145 @@
+---
+title: "InfiniRewardsFactory"
+description: "Reference documentation for the InfiniRewardsFactory contract"
+---
+
+# InfiniRewardsFactory
+
+A factory contract for deploying and managing InfiniRewards components.
+
+## Storage Variables
+
+| Name | Type | Description |
+|------|------|-------------|
+| `admin` | `ContractAddress` | Address of the platform administrator |
+| `merchant_implementations` | `Map<felt252, ClassHash>` | Maps merchant types to their implementation hashes |
+| `user_implementations` | `Map<felt252, ClassHash>` | Maps user types to their implementation hashes |
+| `points_implementation` | `ClassHash` | Implementation hash for points contracts |
+| `collectible_implementation` | `ClassHash` | Implementation hash for collectible contracts |
+| `merchants` | `Map<ContractAddress, bool>` | Registered merchant addresses |
+| `users` | `Map<ContractAddress, bool>` | Registered user addresses |
+
+## Events
+
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| `MerchantCreated` | `merchant: ContractAddress`, `merchant_type: felt252` | Emitted when a new merchant account is created |
+| `UserCreated` | `user: ContractAddress`, `user_type: felt252` | Emitted when a new user account is created |
+| `PointsContractCreated` | `points: ContractAddress`, `merchant: ContractAddress` | Emitted when a new points contract is created |
+| `CollectibleContractCreated` | `collectible: ContractAddress`, `merchant: ContractAddress` | Emitted when a new collectible contract is created |
+
+## Key Methods
+
+### Constructor
+
+```rust
+fn constructor(
+    ref self: ContractState,
+    admin: ContractAddress
+)
+```
+
+Initializes the factory contract.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `admin` | `ContractAddress` | Address of the platform administrator |
+
+### Create Merchant Account
+
+```rust
+fn create_merchant_account(
+    ref self: ContractState,
+    merchant_type: felt252,
+    public_key: felt252
+) -> ContractAddress
+```
+
+Creates a new merchant account.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `merchant_type` | `felt252` | Type of merchant (e.g., "retail", "restaurant") |
+| `public_key` | `felt252` | Public key of the merchant |
+
+Returns: The address of the created merchant account
+
+### Create User Account
+
+```rust
+fn create_user_account(
+    ref self: ContractState,
+    user_type: felt252,
+    public_key: felt252
+) -> ContractAddress
+```
+
+Creates a new user account.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `user_type` | `felt252` | Type of user |
+| `public_key` | `felt252` | Public key of the user |
+
+Returns: The address of the created user account
+
+### Create Points Contract
+
+```rust
+fn create_points_contract(
+    ref self: ContractState,
+    merchant: ContractAddress,
+    name: ByteArray,
+    symbol: ByteArray
+) -> ContractAddress
+```
+
+Creates a new points contract for a merchant.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `merchant` | `ContractAddress` | Address of the merchant |
+| `name` | `ByteArray` | Name of the points token |
+| `symbol` | `ByteArray` | Symbol of the points token |
+
+Returns: The address of the created points contract
+
+### Create Collectible Contract
+
+```rust
+fn create_collectible_contract(
+    ref self: ContractState,
+    merchant: ContractAddress,
+    name: ByteArray,
+    metadata: ByteArray,
+    points_contract: ContractAddress
+) -> ContractAddress
+```
+
+Creates a new collectible contract for a merchant.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `merchant` | `ContractAddress` | Address of the merchant |
+| `name` | `ByteArray` | Name of the collectible token collection |
+| `metadata` | `ByteArray` | Base metadata URI |
+| `points_contract` | `ContractAddress` | Associated points contract address |
+
+Returns: The address of the created collectible contract
+
+### Update Implementation
+
+```rust
+fn update_implementation(
+    ref self: ContractState,
+    contract_type: felt252,
+    implementation: ClassHash
+)
+```
+
+Updates a contract implementation (admin only).
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `contract_type` | `felt252` | Type of contract to update (e.g., "points", "collectible") |
+| `implementation` | `ClassHash` | New implementation hash | 

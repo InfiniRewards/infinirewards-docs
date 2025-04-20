@@ -1,0 +1,149 @@
+---
+title: "InfiniRewardsCollectible"
+description: "Reference documentation for the InfiniRewardsCollectible contract"
+---
+
+# InfiniRewardsCollectible
+
+An ERC1155-based contract for managing collectible tokens within the InfiniRewards ecosystem.
+
+## Storage Variables
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `ByteArray` | Name of the collectible token collection |
+| `metadata` | `ByteArray` | Base metadata URI for the collectible tokens |
+| `points_contract` | `ContractAddress` | Address of the associated points contract |
+| `token_ids` | `Vec<u256>` | List of all token IDs in the collection |
+| `token_prices` | `Map<u256, u256>` | Maps token IDs to their prices in points |
+| `token_expiries` | `Map<u256, u64>` | Maps token IDs to their expiry timestamps |
+| `token_metadatas` | `Map<u256, ByteArray>` | Maps token IDs to their specific metadata URIs |
+| `token_supplies` | `Map<u256, u256>` | Maps token IDs to their current total supply |
+
+## Events
+
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| `ERC1155Event` | Inherited | Standard ERC1155 events (Transfer, ApprovalForAll) |
+| `TokenCreated` | `token_id: u256`, `price: u256`, `supply: u256` | Emitted when a new token type is created |
+| `TokenPurchased` | `buyer: ContractAddress`, `token_id: u256`, `amount: u256` | Emitted when a token is purchased with points |
+
+## Key Methods
+
+### Constructor
+
+```rust
+fn constructor(
+    ref self: ContractState,
+    owner: ContractAddress,
+    name: ByteArray,
+    metadata: ByteArray
+)
+```
+
+Initializes a new collectible token contract.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `owner` | `ContractAddress` | The owner of the contract, typically a merchant |
+| `name` | `ByteArray` | Name of the collectible token collection |
+| `metadata` | `ByteArray` | Base metadata URI for the collectible tokens |
+
+### Create Token
+
+```rust
+fn create_token(
+    ref self: ContractState,
+    token_id: u256,
+    supply: u256,
+    price: u256,
+    expiry: u64,
+    metadata: ByteArray
+) -> u256
+```
+
+Creates a new token type in the collection.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `token_id` | `u256` | Unique identifier for the new token |
+| `supply` | `u256` | Maximum supply of this token |
+| `price` | `u256` | Price in points to purchase this token |
+| `expiry` | `u64` | Timestamp when this token expires (0 for no expiry) |
+| `metadata` | `ByteArray` | Token-specific metadata URI |
+
+Returns: The ID of the created token
+
+### Purchase Token
+
+```rust
+fn purchase_token(
+    ref self: ContractState,
+    token_id: u256,
+    amount: u256
+)
+```
+
+Allows a user to purchase a token with points.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `token_id` | `u256` | ID of the token to purchase |
+| `amount` | `u256` | Number of tokens to purchase |
+
+### Mint
+
+```rust
+fn mint(
+    ref self: ContractState,
+    account: ContractAddress,
+    token_id: u256,
+    value: u256,
+    data: Span<felt252>
+)
+```
+
+Mints new tokens to a specified account (owner only).
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `account` | `ContractAddress` | Recipient of the tokens |
+| `token_id` | `u256` | ID of the token to mint |
+| `value` | `u256` | Number of tokens to mint |
+| `data` | `Span<felt252>` | Additional data to pass to the receiver |
+
+### Burn
+
+```rust
+fn burn(
+    ref self: ContractState,
+    account: ContractAddress,
+    token_id: u256,
+    value: u256
+)
+```
+
+Burns tokens from the specified account.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `account` | `ContractAddress` | Account to burn tokens from |
+| `token_id` | `u256` | ID of the token to burn |
+| `value` | `u256` | Number of tokens to burn |
+
+### Set Token Price
+
+```rust
+fn set_token_price(
+    ref self: ContractState,
+    token_id: u256,
+    price: u256
+)
+```
+
+Sets the price of a token (owner only).
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `token_id` | `u256` | ID of the token to update |
+| `price` | `u256` | New price in points | 

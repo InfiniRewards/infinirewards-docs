@@ -1,0 +1,133 @@
+---
+title: "Account Contracts"
+description: "Reference documentation for the InfiniRewards account contracts"
+---
+
+# Account Contracts
+
+InfiniRewards uses specialized account contracts to provide enhanced functionality for different user types.
+
+## InfiniRewardsMerchantAccount
+
+A specialized account contract for merchant businesses with enhanced capabilities.
+
+### Storage Variables
+
+| Name | Type | Description |
+|------|------|-------------|
+| `public_key` | `felt252` | Public key of the merchant |
+| `points_contracts` | `Vec<ContractAddress>` | List of points contracts owned by this merchant |
+| `collectible_contracts` | `Vec<ContractAddress>` | List of collectible contracts owned by this merchant |
+| `authorized_sessions` | `Map<felt252, SessionKey>` | Authorized session keys |
+| `transaction_nonce` | `felt252` | Current nonce for transaction ordering |
+
+### Key Methods
+
+#### Execute Transaction
+
+```rust
+fn execute_transaction(
+    ref self: ContractState,
+    call_array: Array<Call>,
+    signature: Array<felt252>
+) -> Array<Span<felt252>>
+```
+
+Executes a batch of transactions after validating the signature.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `call_array` | `Array<Call>` | Array of calls to execute |
+| `signature` | `Array<felt252>` | Signature authorizing the calls |
+
+Returns: Array of results from the calls
+
+#### Create Session Key
+
+```rust
+fn create_session_key(
+    ref self: ContractState,
+    session_key: felt252,
+    expiry: u64,
+    permitted_calls: Array<PermittedCall>
+) -> felt252
+```
+
+Creates a session key with limited permissions.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `session_key` | `felt252` | Public key for the session |
+| `expiry` | `u64` | Timestamp when this key expires |
+| `permitted_calls` | `Array<PermittedCall>` | Calls this key is authorized to make |
+
+Returns: Session key ID
+
+## InfiniRewardsUserAccount
+
+A specialized account contract for individual users with loyalty features.
+
+### Storage Variables
+
+| Name | Type | Description |
+|------|------|-------------|
+| `public_key` | `felt252` | Public key of the user |
+| `transaction_nonce` | `felt252` | Current nonce for transaction ordering |
+| `authorized_sessions` | `Map<felt252, SessionKey>` | Authorized session keys |
+| `guardians` | `Vec<ContractAddress>` | List of guardian addresses for account recovery |
+| `recovery_mode_active` | `bool` | Whether recovery mode is currently active |
+
+### Key Methods
+
+#### Execute Transaction
+
+```rust
+fn execute_transaction(
+    ref self: ContractState,
+    call_array: Array<Call>,
+    signature: Array<felt252>
+) -> Array<Span<felt252>>
+```
+
+Executes a batch of transactions after validating the signature.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `call_array` | `Array<Call>` | Array of calls to execute |
+| `signature` | `Array<felt252>` | Signature authorizing the calls |
+
+Returns: Array of results from the calls
+
+#### Add Guardian
+
+```rust
+fn add_guardian(
+    ref self: ContractState,
+    guardian: ContractAddress
+)
+```
+
+Adds a guardian for account recovery.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `guardian` | `ContractAddress` | Address of the guardian to add |
+
+#### Initiate Recovery
+
+```rust
+fn initiate_recovery(
+    ref self: ContractState,
+    guardian: ContractAddress,
+    new_public_key: felt252,
+    guardian_signature: Array<felt252>
+)
+```
+
+Initiates account recovery process.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `guardian` | `ContractAddress` | Address of the guardian initiating recovery |
+| `new_public_key` | `felt252` | New public key to set |
+| `guardian_signature` | `Array<felt252>` | Signature from the guardian | 
