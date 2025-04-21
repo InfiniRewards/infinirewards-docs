@@ -28,58 +28,71 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Modify next.config.mjs for Cloudflare compatibility
+      - name: Install next-on-pages
+        run: npm install --save-dev @cloudflare/next-on-pages
+
+      - name: Create wrangler.toml
         run: |
-          if [ -f "next.config.mjs" ]; then
-            CONFIG_FILE="next.config.mjs"
-          elif [ -f "next.config.js" ]; then
-            CONFIG_FILE="next.config.js"
-          else
-            echo "No next.config.js or next.config.mjs found, creating one"
-            CONFIG_FILE="next.config.js"
-            echo "module.exports = {}" > $CONFIG_FILE
-          fi
-          
-          # Backup the original config
-          cp $CONFIG_FILE ${CONFIG_FILE}.backup
-          
-          # Create config with edge runtime for Cloudflare
-          cat > $CONFIG_FILE << EOL
-          /** @type {import('next').NextConfig} */
-          
-          const nextConfig = {
-            reactStrictMode: true,
-            experimental: {
-              serverActions: {
-                allowedOrigins: ["localhost:3000", "infinirewards-docs.pages.dev"],
-              },
-            },
-            // Force all pages to be compiled with the Edge Runtime
-            experimental: {
-              runtime: 'edge',
-              serverComponents: true,
-            },
-          }
-          
-          export default nextConfig
+          cat > wrangler.toml << EOL
+          name = "infinirewards-docs"
+          compatibility_date = "2024-09-23"
+          compatibility_flags = ["nodejs_compat"]
+          pages_build_output_dir = ".vercel/output/static"
           EOL
 
-      - name: Build
-        run: npm run build
+      - name: Add edge runtime to server routes
+        run: |
+          # Ensure API route uses the Edge runtime
+          mkdir -p .edge-runtime-temp
+          
+          # Find all API and dynamic route files
+          find . -path "*/api/**/route.js" -o -path "*/api/**/route.ts" -o -path "*/api/**/route.tsx" | while read -r file; do
+            if ! grep -q "export const runtime" "$file"; then
+              echo "Adding Edge runtime to $file"
+              cp "$file" ".edge-runtime-temp/$(basename "$file")"
+              echo 'export const runtime = "edge";' > "$file"
+              cat ".edge-runtime-temp/$(basename "$file")" >> "$file"
+            fi
+          done
+          
+          # Also check Pages router API files
+          find ./pages -path "*/api/*.js" -o -path "*/api/*.ts" -o -path "*/api/*.tsx" 2>/dev/null | while read -r file; do
+            if ! grep -q "export const runtime" "$file"; then
+              echo "Adding Edge runtime to $file"
+              cp "$file" ".edge-runtime-temp/$(basename "$file")"
+              echo 'export const runtime = "edge";' > "$file"
+              cat ".edge-runtime-temp/$(basename "$file")" >> "$file"
+            fi
+          done
+          
+          # Check for dynamic route files in app directory
+          find ./app -name "page.js" -o -name "page.tsx" | while read -r file; do
+            if ! grep -q "export const runtime" "$file"; then
+              echo "Adding Edge runtime to $file"
+              cp "$file" ".edge-runtime-temp/$(basename "$file")"
+              echo 'export const runtime = "edge";' > "$file"
+              cat ".edge-runtime-temp/$(basename "$file")" >> "$file"
+            fi
+          done
+          
+          # Check for dynamic route files in pages directory
+          find ./pages -name "[[*]].js" -o -name "[[*]].tsx" 2>/dev/null | while read -r file; do
+            if ! grep -q "export const runtime" "$file"; then
+              echo "Adding Edge runtime to $file"
+              cp "$file" ".edge-runtime-temp/$(basename "$file")"
+              echo 'export const runtime = "edge";' > "$file"
+              cat ".edge-runtime-temp/$(basename "$file")" >> "$file"
+            fi
+          done
+          
+          # Clean up temp directory
+          rm -rf .edge-runtime-temp
+
+      - name: Build for Cloudflare Pages
+        run: npx @cloudflare/next-on-pages
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: 1
-
-      - name: Create _routes.json file for Cloudflare Pages
-        run: |
-          mkdir -p .next/static
-          cat > .next/_routes.json << EOL
-          {
-            "version": 1,
-            "include": ["/*"],
-            "exclude": ["/build/*", "/static/*"]
-          }
-          EOL
 
       - name: Install Wrangler
         run: npm install -g wrangler@latest
@@ -89,4 +102,4 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          wrangler pages deploy .next --project-name=infinirewards-docs
+          wrangler pages deploy .vercel/output/static --project-name=infinirewards-docs
