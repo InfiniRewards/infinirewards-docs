@@ -1,0 +1,19 @@
+---
+description: Details how the documentation content is organized
+globs: 
+alwaysApply: false
+---
+# Documentation Structure
+
+The documentation for InfiniRewards is organized into several key sections:
+
+## Content Organization
+- **Overview**: Introduction to InfiniRewards and core concepts - [content/docs/overview](mdc:content/docs/overview)
+- **Guides**: Step-by-step guides for merchants and developers - [content/docs/guides](mdc:content/docs/guides)
+- **Reference**: Technical documentation for contracts and APIs - [content/docs/reference](mdc:content/docs/reference)
+
+## Navigation Structure
+Navigation is controlled by `meta.json` files throughout the content directories. These files define the sidebar structure and page organization.
+
+## Documentation Home
+The main entry point for the documentation is [content/docs/index.mdx](mdc:content/docs/index.mdx), which serves as the landing page.

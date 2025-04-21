@@ -1,0 +1,28 @@
+---
+description: Outlines the development process for the project
+globs: 
+alwaysApply: false
+---
+# Development Workflow
+
+This document outlines the workflow for developing and maintaining the InfiniRewards documentation site.
+
+## Local Development
+- Run the development server using `npm run dev`
+- The site will be available at http://localhost:3000
+- Changes to content files will be hot-reloaded
+
+## Project Structure
+- **src/app**: Contains the Next.js app router pages and layouts
+- **src/lib**: Contains utility functions and shared components
+- **.source**: Contains source configuration for documentation processing
+- **content**: Contains all documentation content in MDX format
+
+## Build Process
+- The documentation is built using Next.js and Fumadocs
+- Source configuration is defined in [source.config.ts](mdc:source.config.ts)
+- Layout configuration is defined in [src/app/layout.config.tsx](mdc:src/app/layout.config.tsx)
+
+## Deployment
+- The site can be deployed to any platform that supports Next.js
+- The build output is stored in the `.next` directory for production builds

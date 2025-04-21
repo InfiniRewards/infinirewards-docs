@@ -1,0 +1,22 @@
+---
+description: Explains how content is managed through MDX files
+globs: 
+alwaysApply: false
+---
+# Content Management
+
+Documentation content for InfiniRewards is managed through Markdown and MDX files.
+
+## Content Location
+- All documentation content is stored in [content/docs](mdc:content/docs) directory
+- Raw documentation materials are stored in [raw_docs](mdc:raw_docs) directory
+
+## Content Format
+- **MDX**: The content uses MDX (Markdown with JSX) to support interactive components
+- **Frontmatter**: Each content file can include frontmatter for metadata
+- MDX components are configured in [src/mdx-components.tsx](mdc:src/mdx-components.tsx)
+
+## Navigation Control
+- Navigation hierarchy is defined using `meta.json` files
+- The root navigation is configured in [content/docs/meta.json](mdc:content/docs/meta.json)
+- Each section can have its own `meta.json` file for subsection organization

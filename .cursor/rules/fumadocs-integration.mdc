@@ -1,0 +1,26 @@
+---
+description: Describes how Fumadocs is integrated in the project
+globs: 
+alwaysApply: false
+---
+# Fumadocs Integration
+
+This documentation site is built using Fumadocs, a documentation framework for Next.js.
+
+## Configuration
+- Fumadocs configuration is defined in [source.config.ts](mdc:source.config.ts)
+- The main source configuration is also available in [.source/source.config.mjs](mdc:.source/source.config.mjs)
+
+## Content Processing
+- Fumadocs processes MDX content from the [content/docs](mdc:content/docs) directory
+- The content is transformed through the source processor defined in [.source/index.ts](mdc:.source/index.ts)
+
+## Layout and Theming
+- Documentation layout is configured in [src/app/layout.config.tsx](mdc:src/app/layout.config.tsx)
+- The main layout is defined in [src/app/layout.tsx](mdc:src/app/layout.tsx)
+- Styling is handled through Tailwind CSS with Fumadocs preset
+
+## Documentation Features
+- Search functionality is provided by Fumadocs
+- Table of contents, navigation, and other documentation features are automatically generated
+- Custom MDX components can be defined in [src/mdx-components.tsx](mdc:src/mdx-components.tsx)

@@ -1,0 +1,21 @@
+---
+description: Explains the purpose of the project and its tech stack
+globs: 
+alwaysApply: false
+---
+# Project Overview
+
+InfiniRewards Documentation is a website built to document the InfiniRewards platform, which introduces the concept of "Token with Utility" - adding programmable logic to both fungible (ERC20) and non-fungible (ERC1155) tokens on StarkNet.
+
+## Tech Stack
+- **Next.js**: The project is built using Next.js as the React framework
+- **Fumadocs**: Documentation framework used for content organization
+- **Tailwind CSS**: Used for styling
+- **TypeScript**: The project uses TypeScript for type safety
+
+## Key Files
+- Main configuration: [next.config.mjs](mdc:next.config.mjs)
+- TypeScript configuration: [tsconfig.json](mdc:tsconfig.json)
+- Source configuration: [source.config.ts](mdc:source.config.ts)
+- Project entry point: [src/app/layout.tsx](mdc:src/app/layout.tsx)
+- Documentation content: Stored in [content/docs](mdc:content/docs) directory
